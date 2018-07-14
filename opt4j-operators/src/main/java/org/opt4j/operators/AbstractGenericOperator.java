@@ -39,16 +39,16 @@ import org.opt4j.core.Genotype;
 import org.opt4j.core.genotype.CompositeGenotype;
 import org.opt4j.core.optimizer.IncompatibilityException;
 import org.opt4j.core.optimizer.Operator;
+import org.opt4j.core.start.Opt4JTask;
 import org.opt4j.core.start.Parameters;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * Superclass for {@link GenericOperator}s.
- * 
+ *
  * @author lukasiewycz
- * 
+ *
  * @param <O>
  *            The specified {@link Operator}.
  * @param <Q>
@@ -65,15 +65,15 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 	/**
 	 * Comparator for a specific order: Superclasses always are sorted after
 	 * subclasses.
-	 * 
+	 *
 	 * @author lukasiewycz
-	 * 
+	 *
 	 */
 	protected static class ClassComparator implements Comparator<Class<? extends Genotype>> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -96,7 +96,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 	/**
 	 * Constructs an {@link AbstractGenericOperator} class with the given
 	 * clazzes of default operators.
-	 * 
+	 *
 	 * @param clazzes
 	 *            the default operators
 	 */
@@ -108,7 +108,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 	/**
 	 * Inject and organize the operators.
-	 * 
+	 *
 	 * @param holder
 	 *            the operator holder
 	 */
@@ -128,7 +128,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.opt4j.operator.GenericOperator#addOperator(org.opt4j.operator.
 	 * AbstractGenericOperator.OperatorPredicate,
 	 * org.opt4j.core.optimizer.Operator)
@@ -145,7 +145,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.opt4j.operator.GenericOperator#getOperator(org.opt4j.core.problem
 	 * .Genotype)
@@ -179,7 +179,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.opt4j.operator.common.GenericOperator#getHandlers()
 	 */
 	@Override
@@ -193,7 +193,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 	/**
 	 * Returns the target {@link Genotype} for an operator based on the
 	 * {@link Apply} annotation.
-	 * 
+	 *
 	 * @param <O>
 	 *            the type of operator
 	 * @param operator
@@ -224,7 +224,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 		protected Map<OperatorPredicate, P> map = new HashMap<>();
 
 		@Inject
-		protected Injector injector;
+		protected Opt4JTask opt4JTask;
 
 		protected Collection<Class<? extends P>> clazzes = new ArrayList<>();
 
@@ -236,7 +236,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 			Map<OperatorPredicate, P> map = new HashMap<>();
 
 			for (Class<? extends P> clazz : clazzes) {
-				P p = injector.getInstance(clazz);
+				P p = opt4JTask.getInstance(clazz);
 				map.put(new OperatorClassPredicate(getTarget((Operator<?>) p)), p);
 			}
 
@@ -254,15 +254,15 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 	/**
 	 * The {@link OperatorPredicate} interface.
-	 * 
+	 *
 	 * @author lukasiewycz
-	 * 
+	 *
 	 */
 	public interface OperatorPredicate {
 
 		/**
 		 * Checks whether a {@link Genotype} satisfies the predicate.
-		 * 
+		 *
 		 * @param genotype
 		 *            the genotype
 		 * @return {@code true} if the predicate is satisfied
@@ -273,14 +273,14 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 	/**
 	 * The {@link OperatorVoidPredicate} interface is used as marker for
 	 * {@link Operator}s for which the predicate is not explicitly defined.
-	 * 
+	 *
 	 * @author lukasiewycz
-	 * 
+	 *
 	 */
 	public static class OperatorVoidPredicate implements OperatorPredicate {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.opt4j.operator.AbstractGenericOperator.OperatorPredicate#evaluate
 		 * (org.opt4j.core.problem.Genotype)
@@ -292,7 +292,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -305,9 +305,9 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 	/**
 	 * The {@link OperatorClassPredicate} returns {@code true} for a given
 	 * specific class.
-	 * 
+	 *
 	 * @author lukasiewycz
-	 * 
+	 *
 	 */
 	public static class OperatorClassPredicate implements OperatorPredicate {
 
@@ -316,7 +316,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 		/**
 		 * Creates a new {@link OperatorClassPredicate} for the given
 		 * {@link Genotype} class.
-		 * 
+		 *
 		 * @param clazz
 		 *            the class of the genotype
 		 */
@@ -326,7 +326,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.opt4j.operator.AbstractGenericOperator.OperatorPredicate#evaluate
 		 * (org.opt4j.core.problem.Genotype)
@@ -338,7 +338,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/**
 		 * Returns the genotype class for the operator.
-		 * 
+		 *
 		 * @return the genotype class
 		 */
 		public Class<? extends Genotype> getClazz() {
@@ -347,7 +347,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -357,7 +357,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -370,7 +370,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
