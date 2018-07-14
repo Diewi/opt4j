@@ -23,6 +23,7 @@
 package org.opt4j.core.start;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Set;
 
 import org.opt4j.core.Genotype;
@@ -40,14 +41,15 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
  * The {@link Opt4JTask} executes one optimization process.
- * 
+ *
  * @author lukasiewycz
  * @see Task
- * 
+ *
  */
 public class Opt4JTask extends Task implements ControlListener, OptimizerIterationListener {
 
@@ -63,7 +65,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Constructs a {@link Opt4JTask}.
-	 * 
+	 *
 	 */
 	@Inject
 	public Opt4JTask() {
@@ -72,7 +74,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Constructs a {@link Opt4JTask}.
-	 * 
+	 *
 	 * @param closeOnStop
 	 *            close automatically after optimization
 	 */
@@ -82,7 +84,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.opt4j.config.Task#execute()
 	 */
 	@Override
@@ -105,8 +107,23 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 	}
 
 	/**
+	 * Adds a provider for {@code this} {@link Opt4JTask}. Always present.
+	 *
+	 * @param modules
+	 *            collection of modules to inject into {@code this} task.
+	 */
+	public void init(Collection<Module> modules) {
+		// Add the Opt4JTask provider that enables accessing the opt4 injector.
+		// Mandatory.
+		if(!isInit) {
+			modules.add(new Opt4JTaskProvider(this));
+		}
+		super.init(modules);
+	}
+
+	/**
 	 * Initialize with a parent {@link Injector}.
-	 * 
+	 *
 	 * @param injector
 	 *            the parent injector
 	 */
@@ -142,7 +159,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Returns the current iteration.
-	 * 
+	 *
 	 * @return the current iteration
 	 */
 	public int getIteration() {
@@ -155,7 +172,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Returns the instance of the given class.
-	 * 
+	 *
 	 * @param <O>
 	 *            the type of class
 	 * @param type
@@ -172,7 +189,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Returns the {@link Injector} of the task.
-	 * 
+	 *
 	 * @return the injector
 	 */
 	protected Injector getInjector() {
@@ -181,7 +198,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Returns the {@link Optimizer} of the task.
-	 * 
+	 *
 	 * @return the optimizer
 	 */
 	protected Optimizer getOptimizer() {
@@ -190,7 +207,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/**
 	 * Checks for configuration errors in the {@link Injector}.
-	 * 
+	 *
 	 * @param injector
 	 *            the injector
 	 */
@@ -222,7 +239,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 	/**
 	 * Helper function for check() to check the injected creator, decoder, and
 	 * evaluators.
-	 * 
+	 *
 	 * @param creator
 	 *            the creator
 	 * @param decoder
@@ -277,7 +294,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.opt4j.core.optimizer.ControlListener#stateChanged(org.opt4j.core.
 	 * optimizer.Control.State)
@@ -289,7 +306,7 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.opt4j.core.optimizer.OptimizerIterationListener#iterationComplete
 	 * (org.opt4j.core.optimizer.Optimizer, int)
