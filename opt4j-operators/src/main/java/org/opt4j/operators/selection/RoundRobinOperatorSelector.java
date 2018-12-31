@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Opt4J
+ * Copyright (c) 2018 Opt4J
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,39 +19,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
- 
+package org.opt4j.operators.selection;
 
-package org.opt4j.operators.normalize;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.opt4j.core.Genotype;
-import org.opt4j.core.genotype.Bounds;
 import org.opt4j.core.optimizer.Operator;
 
 /**
- * The {@link Normalize} is an operator that achieves that the {@link Bounds} of
- * a {@link Genotype} are fulfilled.
- * 
- * @author lukasiewycz
- * 
- * @param <G>
- *            the type of genotype
+ * Selector that selects one {@link Operator} out of the given {@link Operator}s by a round robin
+ * principle. The list of passed applicable {@link Operator}s is assumed to have a fixed order:
+ * the selection index is bound to the {@link Genotype} to be modified.
+ *
+ * @author diewald
  */
-public interface Normalize<G extends Genotype> extends Operator<G> {
+public class RoundRobinOperatorSelector implements IOperatorSelector {
 
-	/**
-	 * Normalizes the {@link Genotype} .
-	 * 
-	 * @param genotype
-	 *            the genotype to be normalized
-	 */
-	public void normalize(G genotype);
+	/** Remembers the selection index bound to {@link Genotype}s. */
+	private Map<Genotype, Integer> selectionHolder = new HashMap<>();
 
 	/* (non-Javadoc)
-	 * @see org.opt4j.core.optimizer.Operator#getOperatorType()
+	 * @see org.opt4j.operators.selection.IOperatorSelector#select(java.util.List, org.opt4j.core.Genotype)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	default Class<? extends Operator<?>> getOperatorType() {
-		return (Class<? extends Operator<?>>)(Class<?>) Normalize.class;
+	public <O extends Operator<?>> O select(List<O> applicableOperators, Genotype genotype) {
+		if(applicableOperators.isEmpty()) {
+			return null;
+		}
+
+		int selIdx = selectionHolder.get(genotype);
+		selIdx = (selIdx < applicableOperators.size()) ? selIdx : 0;
+		selectionHolder.put(genotype, selIdx);
+
+		return applicableOperators.get(selIdx);
 	}
 }

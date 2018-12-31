@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Opt4J
+ * Copyright (c) 2018 Opt4J
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,39 +19,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
- 
 
-package org.opt4j.operators.normalize;
+package org.opt4j.operators.selection;
+
+import java.util.List;
 
 import org.opt4j.core.Genotype;
-import org.opt4j.core.genotype.Bounds;
 import org.opt4j.core.optimizer.Operator;
 
+
 /**
- * The {@link Normalize} is an operator that achieves that the {@link Bounds} of
- * a {@link Genotype} are fulfilled.
- * 
- * @author lukasiewycz
- * 
- * @param <G>
- *            the type of genotype
+ * Defines a strategy that selects one {@link Operator} out of {@code n} {@link Operator}s
+ * applicable for a single {@link Genotype}.
+ *
+ * @author diewald
  */
-public interface Normalize<G extends Genotype> extends Operator<G> {
+public interface IOperatorSelector {
+
 
 	/**
-	 * Normalizes the {@link Genotype} .
-	 * 
-	 * @param genotype
-	 *            the genotype to be normalized
+	 * Selects one {@link Operator} out of {@code n} {@link Operator}s applicable for a single
+	 * {@link Genotype}.
+	 *
+	 * @param applicableOperators list of applicable {@link Operator}s.
+	 * @param genotype {@link Genotype} for which the {@link Operator} shall be applied.
+	 * @return selected {@link Operator} from the input list.
 	 */
-	public void normalize(G genotype);
-
-	/* (non-Javadoc)
-	 * @see org.opt4j.core.optimizer.Operator#getOperatorType()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	default Class<? extends Operator<?>> getOperatorType() {
-		return (Class<? extends Operator<?>>)(Class<?>) Normalize.class;
-	}
+	<O extends Operator<?>> O select(List<O> applicableOperators, Genotype genotype);
 }

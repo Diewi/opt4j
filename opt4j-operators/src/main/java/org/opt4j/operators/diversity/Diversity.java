@@ -53,4 +53,12 @@ public interface Diversity<G extends Genotype> extends Operator<G> {
 	 */
 	public double diversity(G a, G b);
 
+	/* (non-Javadoc)
+	 * @see org.opt4j.core.optimizer.Operator#getOperatorType()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	default Class<? extends Operator<?>> getOperatorType() {
+		return (Class<? extends Operator<?>>)(Class<?>) Diversity.class;
+	}
 }
