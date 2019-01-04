@@ -42,9 +42,9 @@ import com.google.inject.Inject;
 /**
  * The {@link MatingCrossoverMutate} creates offspring from a given set of
  * parents by using {@link Crossover} and {@code Mutate}.
- * 
+ *
  * @author glass, lukasiewycz
- * 
+ *
  */
 public class MatingCrossoverMutate implements Mating {
 
@@ -61,7 +61,7 @@ public class MatingCrossoverMutate implements Mating {
 	 * Constructs a {@link MatingCrossoverMutate} with a given {@link Crossover}
 	 * , {@link Mutate}, {@link Copy}, {@link Coupler}, {@link CrossoverRate},
 	 * {@link Rand}, and {@link IndividualFactory}.
-	 * 
+	 *
 	 * @param crossover
 	 *            the crossover operator
 	 * @param mutate
@@ -96,7 +96,7 @@ public class MatingCrossoverMutate implements Mating {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.opt4j.optimizer.ea.Mating#getOffspring(int,
 	 * org.opt4j.core.Individual[])
 	 */
@@ -107,7 +107,7 @@ public class MatingCrossoverMutate implements Mating {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.opt4j.optimizer.ea.Mating#getOffspring(int,
 	 * java.util.Collection)
 	 */
@@ -118,11 +118,11 @@ public class MatingCrossoverMutate implements Mating {
 
 	/**
 	 * Creates offspring from a given set of parents.
-	 * 
+	 *
 	 * The {@link Coupler} is used to create pairs of parents, which are mated
 	 * using the {@link Mutate} and, depending on the {@link CrossoverRate}, the
 	 * {@link Crossover} operator.
-	 * 
+	 *
 	 * @param size
 	 *            the number of individuals to create
 	 * @param parents
@@ -153,7 +153,7 @@ public class MatingCrossoverMutate implements Mating {
 
 	/**
 	 * Performs the actual {@link Coupler} process of two parents.
-	 * 
+	 *
 	 * @param parent1
 	 *            parent one
 	 * @param parent2
@@ -163,18 +163,13 @@ public class MatingCrossoverMutate implements Mating {
 	 * @return the two offspring individuals
 	 */
 	protected Pair<Individual> mate(Individual parent1, Individual parent2, boolean doCrossover) {
-		Genotype p1 = parent1.getGenotype();
-		Genotype p2 = parent2.getGenotype();
-		Genotype o1;
-		Genotype o2;
+		Genotype o1 = copy.copy(parent1.getGenotype());
+		Genotype o2 = copy.copy(parent2.getGenotype());
 
 		if (doCrossover) {
-			Pair<Genotype> offspring = crossover.crossover(p1, p2);
+			Pair<Genotype> offspring = crossover.crossover(o1, o2);
 			o1 = offspring.getFirst();
 			o2 = offspring.getSecond();
-		} else {
-			o1 = copy.copy(p1);
-			o2 = copy.copy(p2);
 		}
 
 		mutate.mutate(o1, mutationRate.get());
