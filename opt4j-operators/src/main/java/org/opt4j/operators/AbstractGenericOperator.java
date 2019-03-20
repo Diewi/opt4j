@@ -24,6 +24,7 @@ package org.opt4j.operators;
 
 import static com.google.common.collect.MultimapBuilder.hashKeys;
 import static com.google.common.collect.MultimapBuilder.treeKeys;
+import static java.util.Collections.emptyList;
 
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;
@@ -191,7 +192,7 @@ public abstract class AbstractGenericOperator<O extends Operator<?>, Q extends O
 			}
 
 			// Searches for a superclass that is registered as an operator.
-			Collection<Entry<Class<? extends Genotype>, O>> newOperatorsDefs = null;
+			Collection<Entry<Class<? extends Genotype>, O>> newOperatorsDefs = emptyList();
 			for (Entry<Class<? extends Genotype>, O> entry : classOperators.entries()) {
 				if(entry.getValue() == null) {
 					continue;
