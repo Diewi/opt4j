@@ -347,7 +347,7 @@ public class Spea2 implements Selector {
 			int size = lcandidates.size();
 
 			for (int k = 0; k < size - 1; k++) {
-				double min = Double.MAX_VALUE;
+				double min = Double.POSITIVE_INFINITY;
 
 				for (Spea2IndividualSet candidate : lcandidates) {
 					double value = distance(candidate, orderedLists.get(candidate).get(k));
