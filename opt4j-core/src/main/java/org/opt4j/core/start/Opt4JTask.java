@@ -186,6 +186,23 @@ public class Opt4JTask extends Task implements ControlListener, OptimizerIterati
 		}
 		return injector.getInstance(type);
 	}
+	
+	/**
+	 * Returns the instance of the given {@link Key}.
+	 *
+	 * @param <O>
+	 *            the type of class
+	 * @param type
+	 *            the {@link Key}
+	 * @return the instance of the class
+	 */
+	public <O> O getInstance(Key<O> type) {
+		Injector injector = getInjector();
+		if (injector == null) {
+			return null;
+		}
+		return injector.getInstance(type);
+	}
 
 	/**
 	 * Returns the {@link Injector} of the task.
